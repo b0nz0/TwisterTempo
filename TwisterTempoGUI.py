@@ -6,7 +6,7 @@ from pyglet.window import FPSDisplay
 class TwisterTempoGUI(object):
     WINDOW_HEIGHT = 600
     WINDOW_WIDTH = 800
-    CIRCLES_RADIUS = 170
+    CIRCLES_RADIUS = 190
     LARGE_CIRCLES_RADIUS = 225
 
     def __init__(self):
