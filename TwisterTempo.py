@@ -63,10 +63,5 @@ if __name__ == '__main__':
     logging.info("Ending...")
     print("Ending...")
 
-# TODO: comandi da tastiera: flag di muovere il piede di più posizioni
-# TODO: spostare di più di una posizione con impostazione da tastiera
-# TODO: splashscreen con pausa, istruzioni con credits e comandi
-# TODO: input da loopback --> sembra impossibile sotto Mac OS
-# TODO: aggiungere i nomi L e R sotto i cerchi e una + quando sono insieme
-# TODO: trovare bel nome (TwisterRhythm?)
-# TODO: scrivere su un log invece che a schermo
+# TODO: move the foot more than a single position (configurable by keyboard)
+# TODO: splashscreen with pause, instructions and credits
