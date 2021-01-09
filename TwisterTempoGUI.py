@@ -4,10 +4,18 @@ from pyglet.window import FPSDisplay
 
 
 class TwisterTempoGUI(object):
+    # window and sprite sizes
     WINDOW_HEIGHT = 600
     WINDOW_WIDTH = 800
     CIRCLES_RADIUS = 190
-    LARGE_CIRCLES_RADIUS = 225
+    LARGE_CIRCLE_RADIUS = 225
+    LETTERS_SIZE = 60
+    RIGHT_CIRCLE_POS = (WINDOW_WIDTH // 4 * 3 - CIRCLES_RADIUS, WINDOW_HEIGHT // 2 - CIRCLES_RADIUS)
+    LEFT_CIRCLE_POS = (WINDOW_WIDTH // 4 - CIRCLES_RADIUS, WINDOW_HEIGHT // 2 - CIRCLES_RADIUS)
+    LARGE_CIRCLE_POS = (WINDOW_WIDTH // 2 - LARGE_CIRCLE_RADIUS, WINDOW_HEIGHT // 2 - LARGE_CIRCLE_RADIUS)
+    L_POS = (WINDOW_WIDTH // 4 - LETTERS_SIZE // 2, LETTERS_SIZE // 2)
+    PLUS_POS = (WINDOW_WIDTH // 2 - LETTERS_SIZE // 2, LETTERS_SIZE // 2)
+    R_POS = (WINDOW_WIDTH // 4 * 3 - LETTERS_SIZE // 2, LETTERS_SIZE // 2)
 
     def __init__(self):
         config = gl.Config(double_buffer=True)
@@ -20,20 +28,14 @@ class TwisterTempoGUI(object):
         resource.path = ['resources']
         resource.reindex()
 
-        self._right_circle_pos = (self.window.width // 4 * 3 - TwisterTempoGUI.CIRCLES_RADIUS,
-                                  self.window.height // 2 - TwisterTempoGUI.CIRCLES_RADIUS)
-        self._left_circle_pos = (self.window.width // 4 - TwisterTempoGUI.CIRCLES_RADIUS,
-                                 self.window.height // 2 - TwisterTempoGUI.CIRCLES_RADIUS)
-        self._large_circle_pos = (self.window.width // 2 - TwisterTempoGUI.LARGE_CIRCLES_RADIUS,
-                                  self.window.height // 2 - TwisterTempoGUI.LARGE_CIRCLES_RADIUS)
-
         self._pause_label = text.Label('pause',
                                        font_name='Courier',
                                        font_size=36,
-                                       x=self.window.width // 2, y=self.window.height // 10,
+                                       x=TwisterTempoGUI.WINDOW_WIDTH // 2, y=TwisterTempoGUI.WINDOW_HEIGHT // 10,
                                        anchor_x='center', anchor_y='center',
                                        color=(255, 255, 255, 255))
 
+        self._background = resource.image('background.png')
         self._cloud_image = resource.image('cloud_white.png')
         # self._cloud_image.anchor_x = self._cloud_image.width // 2
         # self._cloud_image.anchor_y = self._cloud_image.height // 2
@@ -67,6 +69,34 @@ class TwisterTempoGUI(object):
                                                                                 duration=0.04, loop=False)
         self._right_circle_sprite = None
         self._left_circle_sprite = None
+
+        letters_sheet = pyglet.resource.image('letters.png')
+        image_grid = pyglet.image.ImageGrid(letters_sheet, rows=1, columns=9)
+
+        self._L_animation = pyglet.image.Animation.from_image_sequence([image_grid[0],
+                                                                        image_grid[1],
+                                                                        image_grid[2],
+                                                                        image_grid[1],
+                                                                        image_grid[2]],
+                                                                       duration=0.04, loop=False)
+
+        self._plus_animation = pyglet.image.Animation.from_image_sequence([image_grid[3],
+                                                                           image_grid[4],
+                                                                           image_grid[5],
+                                                                           image_grid[4],
+                                                                           image_grid[5]],
+                                                                          duration=0.04, loop=False)
+
+        self._R_animation = pyglet.image.Animation.from_image_sequence([image_grid[6],
+                                                                        image_grid[7],
+                                                                        image_grid[8],
+                                                                        image_grid[7],
+                                                                        image_grid[8]],
+                                                                       duration=0.04, loop=False)
+
+        self._L_sprite = sprite.Sprite(self._L_animation)
+        self._plus_sprite = sprite.Sprite(self._plus_animation)
+        self._R_sprite = sprite.Sprite(self._R_animation)
 
         sprite_large_sheet = pyglet.resource.image('tt_animation_large.png')
         image_large_grid = pyglet.image.ImageGrid(sprite_large_sheet, rows=4, columns=4)
@@ -119,11 +149,14 @@ class TwisterTempoGUI(object):
             self._right_circle_sprite = sprite.Sprite(self._red_circle_animation)
         else:
             raise RuntimeError("No valid color given: %s" % str(color))
-        self._right_circle_sprite.position = self._right_circle_pos
+        self._right_circle_sprite.position = TwisterTempoGUI.RIGHT_CIRCLE_POS
+        self._R_sprite = sprite.Sprite(self._R_animation)
+        self._R_sprite.position = TwisterTempoGUI.R_POS
+
         self._show_circles = True
         self._show_large_circle = False
         if on_air:
-            self._draw_on_air = (True, self._right_circle_pos[0], self._right_circle_pos[1])
+            self._draw_on_air = (True, TwisterTempoGUI.RIGHT_CIRCLE_POS[0], TwisterTempoGUI.RIGHT_CIRCLE_POS[1])
         else:
             self._draw_on_air = (False, 0, 0)
 
@@ -139,11 +172,14 @@ class TwisterTempoGUI(object):
             self._left_circle_sprite = sprite.Sprite(self._red_circle_animation)
         else:
             raise RuntimeError("No valid color given: %s" % str(color))
-        self._left_circle_sprite.position = self._left_circle_pos
+        self._left_circle_sprite.position = TwisterTempoGUI.LEFT_CIRCLE_POS
+        self._L_sprite = sprite.Sprite(self._L_animation)
+        self._L_sprite.position = TwisterTempoGUI.L_POS
+
         self._show_circles = True
         self._show_large_circle = False
         if on_air:
-            self._draw_on_air = (True, self._left_circle_pos[0], self._left_circle_pos[1])
+            self._draw_on_air = (True, TwisterTempoGUI.LEFT_CIRCLE_POS[0], TwisterTempoGUI.LEFT_CIRCLE_POS[1])
         else:
             self._draw_on_air = (False, 0, 0)
 
@@ -158,23 +194,32 @@ class TwisterTempoGUI(object):
             self._large_circle_sprite = sprite.Sprite(self._red_large_circle_animation)
         else:
             raise RuntimeError("No valid color given: %s" % str(color))
-        self._large_circle_sprite.position = self._large_circle_pos
+        self._large_circle_sprite.position = TwisterTempoGUI.LARGE_CIRCLE_POS
+        self._plus_sprite = sprite.Sprite(self._plus_animation)
+        self._plus_sprite.position = TwisterTempoGUI.PLUS_POS
+
         self._show_circles = False
         self._show_large_circle = True
 
     def draw(self):
         # print("in draw @ %f" % perf_counter())
         self.window.clear()
+        self._background.blit(0, 0, 0)
 
         if self._show_circles:
             self._right_circle_sprite.draw()
             self._left_circle_sprite.draw()
+            self._L_sprite.draw()
+            self._R_sprite.draw()
             # if a foot is on air
             (o, x, y) = self._draw_on_air
             if o:
                 self._cloud_image.blit(x, y, 0)
         elif self._show_large_circle:
             self._large_circle_sprite.draw()
+            self._L_sprite.draw()
+            self._R_sprite.draw()
+            self._plus_sprite.draw()
         # if paused
         if self.show_pause:
             (r, g, b, a) = self._pause_label.color

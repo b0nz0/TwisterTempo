@@ -49,9 +49,6 @@ class TempoFinder(object):
 
         if WRITE_WAV:
             self._out_file = sink(samplerate=int(self._samplerate))
-            # import soundfile
-            # self._out_file = soundfile.SoundFile(WAV_NAME, mode='w', samplerate=int(self._samplerate),
-            #    channels=1, subtype="PCM_16")
 
     def start(self):
         self._stream.start()
