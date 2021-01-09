@@ -37,8 +37,6 @@ class TwisterTempoGUI(object):
 
         self._background = resource.image('background.png')
         self._cloud_image = resource.image('cloud_white.png')
-        # self._cloud_image.anchor_x = self._cloud_image.width // 2
-        # self._cloud_image.anchor_y = self._cloud_image.height // 2
 
         sprite_sheet = pyglet.resource.image('tt_animation.png')
         image_grid = pyglet.image.ImageGrid(sprite_sheet, rows=4, columns=4)
@@ -202,7 +200,6 @@ class TwisterTempoGUI(object):
         self._show_large_circle = True
 
     def draw(self):
-        # print("in draw @ %f" % perf_counter())
         self.window.clear()
         self._background.blit(0, 0, 0)
 

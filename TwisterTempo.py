@@ -1,15 +1,20 @@
 import pyglet
 from pyglet.window import key
+import logging
 
 from TempoFinder import TempoFinder
 from TwoFeetTempoMove import TwoFeetTempoMove
 
 if __name__ == '__main__':
-    # record_sink(sys.argv[1])
-    # print_tempo()
+    logging.basicConfig(filename='TwisterTempo.log', level=logging.INFO,
+                        filemode='w')
+
+    # a sample rate of 8000 is somehow enough
     tf = TempoFinder(samplerate=8000)
     tf.start()
-    tftm = TwoFeetTempoMove(800, 100)
+
+    # starting values for the random move detector
+    tftm = TwoFeetTempoMove(500, 1)
     tf.set_tempo_found_callback(tftm.tempo_found_callback)
     pyglet.clock.schedule_interval(tf.record_hop, .01)
 
@@ -22,32 +27,41 @@ if __name__ == '__main__':
         if symbol == key.UP:  # increase sensibility
             tf.increase_sensibility()
             print("increased sensibility")
+            logging.info("increased sensibility")
         elif symbol == key.DOWN:  # decrease sensibility
             tf.decrease_sensibility()
             print("decreased sensibility")
+            logging.info("decreased sensibility")
         elif symbol == key.RIGHT:  # increase speed
             tftm.increase_speed()
             print("increased speed")
+            logging.info("increased speed")
         elif symbol == key.LEFT:  # decrease speed
             tftm.decrease_speed()
             print("decreased speed")
+            logging.info("decreased speed")
         elif symbol == key.SPACE:  # toggle pause on beat recognition
             tf.on_pause = not tf.on_pause
             tftm.tt_gui.show_pause = tf.on_pause
-            print("pause toggle")
+            logging.info("pause toggle")
         elif symbol == key.ESCAPE:  # exit
             pyglet.app.exit()
+            logging.info("exiting")
         elif symbol == key.L:  # exit
             tftm.tt_gui.set_large_color("GREEN")
 
     tf.on_pause = False
     tftm.tt_gui.show_pause = False
 
+    print("Starting...")
+    logging.info("Starting...")
     pyglet.app.run()
 
     tf.end()
 
-    print("BPM: %f" % tf.get_bpms())
+    logging.info("BPM: %f" % tf.get_bpms())
+    logging.info("Ending...")
+    print("Ending...")
 
 # TODO: comandi da tastiera: flag di muovere il piede di più posizioni
 # TODO: spostare di più di una posizione con impostazione da tastiera

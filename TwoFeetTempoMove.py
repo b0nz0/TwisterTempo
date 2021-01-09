@@ -1,5 +1,6 @@
 from random import randrange, random
 from time import time
+import logging
 from TwisterTempoGUI import TwisterTempoGUI
 
 
@@ -23,9 +24,9 @@ class TwoFeetTempoMove(object):
         self._left_direction = "FW"
         self._right_direction = "FW"
         self._next_foot = 'RIGHT'
-        print("Starting with LEFT: %s, RIGHT: %s" %
-              (TwoFeetTempoMove.COLORS_ALPHA[self._left_color],
-               TwoFeetTempoMove.COLORS_ALPHA[self._right_color]))
+        logging.info("Starting with LEFT: %s, RIGHT: %s" %
+                     (TwoFeetTempoMove.COLORS_ALPHA[self._left_color],
+                      TwoFeetTempoMove.COLORS_ALPHA[self._right_color]))
         self.tt_gui = TwisterTempoGUI()
         self.tt_gui.set_left_color(TwoFeetTempoMove.COLORS_ALPHA[self._left_color])
         self.tt_gui.set_right_color(TwoFeetTempoMove.COLORS_ALPHA[self._right_color])
@@ -54,11 +55,11 @@ class TwoFeetTempoMove(object):
 
     def beat_found(self):
         millis = self._last_beat_millis
-        print("Randomized beat found at: %d:%d.%d" %
-              (millis / 60000, millis / 1000, millis % 1000))
+        logging.debug("Randomized beat found at: %d:%d.%d" %
+                      (millis / 60000, millis / 1000, millis % 1000))
         act_millis = time() * 1000 - self._starting_millis
-        print("\tActual: %d:%d.%d" %
-              (act_millis / 60000, act_millis / 1000, act_millis % 1000))
+        logging.debug("\tActual: %d:%d.%d" %
+                      (act_millis / 60000, act_millis / 1000, act_millis % 1000))
 
         # special moves
         if random() < TwoFeetTempoMove.FOOT_ON_AIR_PERC:  # randomized next foot on air move
@@ -66,7 +67,7 @@ class TwoFeetTempoMove(object):
                 self.tt_gui.set_right_color(TwoFeetTempoMove.COLORS_ALPHA[self._right_color], on_air=True)
             else:
                 self.tt_gui.set_left_color(TwoFeetTempoMove.COLORS_ALPHA[self._left_color], on_air=True)
-            print("\tmove next foot On Air")
+            logging.debug("\tmove next foot On Air")
 
         elif random() < TwoFeetTempoMove.FEET_ON_SAME_CIRCLE_PERC:  # randomized both feet on same circle
             if self._next_foot == 'RIGHT':
@@ -75,7 +76,7 @@ class TwoFeetTempoMove(object):
             else:
                 self._left_color = self._right_color
                 self.tt_gui.set_large_color(TwoFeetTempoMove.COLORS_ALPHA[self._left_color])
-            print("\tmove both feet on same circle")
+            logging.debug("\tmove both feet on same circle")
 
         # end special moves
         else:
@@ -99,7 +100,7 @@ class TwoFeetTempoMove(object):
                     else:
                         self._right_color = self._right_color - 1
                 self.tt_gui.set_right_color(TwoFeetTempoMove.COLORS_ALPHA[self._right_color])
-                print("\tmove RIGHT foot to " + TwoFeetTempoMove.COLORS_ALPHA[self._right_color])
+                logging.debug("\tmove RIGHT foot to " + TwoFeetTempoMove.COLORS_ALPHA[self._right_color])
                 self._next_foot = 'LEFT'
             else:
                 if self._left_direction == "FW":
@@ -115,6 +116,6 @@ class TwoFeetTempoMove(object):
                     else:
                         self._left_color = self._left_color - 1
                 self.tt_gui.set_left_color(TwoFeetTempoMove.COLORS_ALPHA[self._left_color])
-                print("\tmove LEFT foot to " + TwoFeetTempoMove.COLORS_ALPHA[self._left_color])
+                logging.debug("\tmove LEFT foot to " + TwoFeetTempoMove.COLORS_ALPHA[self._left_color])
                 self._next_foot = 'RIGHT'
 
