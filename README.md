@@ -1,3 +1,4 @@
+![Logo](resources/twister_tempo_logo.png)
 # TwisterTempo
 *TwisterTempo* is a Python game involving a specific mat, 
 like the ones you can find in other, physical, games 
